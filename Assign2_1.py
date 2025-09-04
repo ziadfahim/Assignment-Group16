@@ -56,3 +56,37 @@ def transform_text(text, shift1, shift2, mode, tags=None):
             else:
                 out_chars.append(ch)
         return "".join(out_chars)
+
+def verify_files(file1, file2):
+    with open(file1, "r", encoding="utf-8") as f1, open(file2, "r", encoding="utf-8") as f2:
+        return f1.read() == f2.read()
+
+if __name__ == "__main__":
+    shift1 = int(input("Enter shift1 value: "))
+    shift2 = int(input("Enter shift2 value: "))
+
+    raw_file = "raw_text.txt"
+    encrypted_file = "encrypted_text.txt"
+    decrypted_file = "decrypted_text.txt"
+
+    # Encrypt
+    with open(raw_file, "r", encoding="utf-8") as f:
+        raw_text = f.read()
+    encrypted_text = transform_text(raw_text, shift1, shift2, "encrypt")
+    with open(encrypted_file, "w", encoding="utf-8") as f:
+        f.write(encrypted_text)
+    print("Encrypted file created")
+
+    # Decrypt
+    with open(encrypted_file, "r", encoding="utf-8") as f:
+        encrypted_text = f.read()
+    decrypted_text = transform_text(encrypted_text, shift1, shift2, "decrypt")
+    with open(decrypted_file, "w", encoding="utf-8") as f:
+        f.write(decrypted_text)
+    print("Decrypted file created")
+
+    # Verify
+    if verify_files(raw_file, decrypted_file):
+        print("Verification successful! Decryption matches original.")
+    else:
+        print("Verification failed.")
