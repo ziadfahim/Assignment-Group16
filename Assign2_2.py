@@ -67,3 +67,35 @@ def largest_temp_range(data):
             max_temp = grouped.max()[station]
             min_temp = grouped.min()[station]
             f.write(f"{station}: Range {max_range:.1f}°C (Max: {max_temp:.1f}°C, Min: {min_temp:.1f}°C)\n")
+
+# ---------- Task 3: Temperature Stability ----------
+def temperature_stability(data):
+    data = data.dropna(subset=["Temperature"])  # drop NaN
+    grouped = data.groupby("STATION_NAME")["Temperature"]
+
+    stddevs = grouped.std()
+
+    min_std = stddevs.min()
+    max_std = stddevs.max()
+
+    stable_stations = stddevs[stddevs == min_std].index.sort_values()
+    variable_stations = stddevs[stddevs == max_std].index.sort_values()
+
+    with open("temperature_stability_stations.txt", "w") as f:
+        for s in stable_stations:
+            f.write(f"Most Stable: {s}: StdDev {min_std:.1f}°C\n")
+        for v in variable_stations:
+            f.write(f"Most Variable: {v}: StdDev {max_std:.1f}°C\n")
+
+# ---------- Main Program ----------
+def main():
+    data = load_all_data("temperatures")
+
+    seasonal_average(data)
+    largest_temp_range(data)
+    temperature_stability(data)
+
+    print("Analysis completed! Check the output text files.")
+
+if __name__ == "__main__":
+    main()
